@@ -1,0 +1,19 @@
+{
+  "name": "vanilla-js-ts-router",
+  "version": "1.0.9",
+  "description": "a basic router for a vanila javascript and typescript frontend",
+  "main": "router.js",
+  "keywords": [
+    "typescript",
+    "router",
+    "frontend",
+    "vanilla",
+    "navigation",
+    "routing"
+  ],
+  "author": "https://github.com/KoenMW",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.4.3"
+  }
+}
