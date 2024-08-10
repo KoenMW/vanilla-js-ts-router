@@ -158,6 +158,7 @@ var router = function (useParams, debug) {
     params = useParams;
     debugging = debug;
     debugging && console.log("router initialized");
+    debugging && console.log(useParams ? "using params" : "using pathname");
     render(getRoute() || "/"); // render the initial route
     window.onpopstate = function () {
         render(getRoute() || "/");
