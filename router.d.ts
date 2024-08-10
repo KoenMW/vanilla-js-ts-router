@@ -47,9 +47,11 @@ export declare const goTo: (route: string) => void;
  * @param name the name of the parameter
  * @returns the value of the parameter
  */
-export declare const getParam: (name: string) => string | null;
+export declare const getParam: (name: string) => string;
 /**
  * initializes the router
+ * @param useParams whether to use query parameters for routing
+ * when using query parameters your route will be in the form of /?route=your-route
  */
-declare const router: () => void;
+declare const router: (useParams?: boolean) => void;
 export default router;
