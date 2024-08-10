@@ -53,53 +53,70 @@ exports.setRoutes = setRoutes;
  */
 var getFile = function (location) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, fetch(location).then(function (resopnse) {
-                return resopnse.text().then(function (text) {
-                    return text;
-                });
-            })];
+        try {
+            debugging && console.log("getting file: ", location);
+            return [2 /*return*/, fetch(location).then(function (resopnse) {
+                    return resopnse.text().then(function (text) {
+                        return text;
+                    });
+                })];
+        }
+        catch (error) {
+            console.log("couldn't get file: ", error);
+            return [2 /*return*/, "404"];
+        }
+        return [2 /*return*/];
     });
 }); };
 exports.getFile = getFile;
 var render = function (route) {
-    var validRoute = routes[route];
-    var main = document.querySelector("body");
-    if (!main)
-        return;
-    if (!validRoute) {
-        main.innerHTML = "404";
-        return;
-    }
-    if (validRoute.condition && !validRoute.condition()) {
-        if (validRoute.fallback)
-            (0, exports.goTo)(validRoute.fallback);
-        else {
-            window.history.pushState({}, "", "/");
-            render(window.location.pathname || "/");
+    try {
+        var validRoute_1 = routes[route];
+        var main_1 = document.querySelector("body");
+        debugging && console.log("rendering: ", route);
+        debugging && console.log("valid route: ", validRoute_1);
+        if (!main_1)
+            return;
+        if (!validRoute_1) {
+            console.error("404: no valid route found: ", route, " in routes: ", routes);
+            main_1.innerHTML = "404";
+            return;
         }
-        return;
-    }
-    document.title = validRoute.title;
-    if (validRoute.content) {
-        validRoute.content.then(function (content) {
-            main.innerHTML = content;
-            if (validRoute.scripts) {
-                validRoute.scripts.forEach(function (script) {
+        if (validRoute_1.condition && !validRoute_1.condition()) {
+            if (validRoute_1.fallback)
+                (0, exports.goTo)(validRoute_1.fallback);
+            else {
+                window.history.pushState({}, "", "/");
+                render(window.location.pathname || "/");
+            }
+            return;
+        }
+        document.title = validRoute_1.title;
+        if (validRoute_1.content) {
+            validRoute_1.content.then(function (content) {
+                main_1.innerHTML = content;
+                if (validRoute_1.scripts) {
+                    validRoute_1.scripts.forEach(function (script) {
+                        script();
+                    });
+                }
+            });
+        }
+        else {
+            main_1.innerHTML = "";
+            if (validRoute_1.scripts) {
+                validRoute_1.scripts.forEach(function (script) {
                     script();
                 });
             }
-        });
-    }
-    else {
-        main.innerHTML = "";
-        if (validRoute.scripts) {
-            validRoute.scripts.forEach(function (script) {
-                script();
-            });
         }
+    }
+    catch (error) {
+        console.log("error while rendering: ", error);
     }
 };
 var params = false;
+var debugging = false;
 /**
  * sets the route to go to
  * @param route the route to go to
@@ -119,13 +136,12 @@ var getParam = function (name) {
 };
 exports.getParam = getParam;
 var getRoute = function () {
-    console.log("getRoute called");
     var route = window.location.pathname;
     if (params) {
         var urlParams = new URLSearchParams(window.location.search);
         route = urlParams.get("route") || "/";
     }
-    console.log("route: ", route);
+    debugging && console.log("got route: ", route);
     return route;
 };
 window.onpopstate = function () {
@@ -136,10 +152,12 @@ window.onpopstate = function () {
  * @param useParams whether to use query parameters for routing
  * when using query parameters your route will be in the form of /?route=your-route
  */
-var router = function (useParams) {
+var router = function (useParams, debug) {
     if (useParams === void 0) { useParams = false; }
-    console.log("router initialized");
+    if (debug === void 0) { debug = false; }
     params = useParams;
+    debugging = debug;
+    debugging && console.log("router initialized");
     render(getRoute() || "/"); // render the initial route
     window.onpopstate = function () {
         render(getRoute() || "/");

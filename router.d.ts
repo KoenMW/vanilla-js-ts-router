@@ -53,5 +53,5 @@ export declare const getParam: (name: string) => string | null;
  * @param useParams whether to use query parameters for routing
  * when using query parameters your route will be in the form of /?route=your-route
  */
-declare const router: (useParams?: boolean) => void;
+declare const router: (useParams?: boolean, debug?: boolean) => void;
 export default router;

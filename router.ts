@@ -43,50 +43,69 @@ export type Routes = {
  * @returns Promise<string> the content of the file
  */
 export const getFile = async (location: string): Promise<string> => {
-  return fetch(location).then((resopnse) => {
-    return resopnse.text().then((text) => {
-      return text;
+  try {
+    debugging && console.log("getting file: ", location);
+    return fetch(location).then((resopnse) => {
+      return resopnse.text().then((text) => {
+        return text;
+      });
     });
-  });
+  } catch (error) {
+    console.log("couldn't get file: ", error);
+    return "404";
+  }
 };
 
 const render = (route: string) => {
-  const validRoute = routes[route];
-  const main = document.querySelector("body");
-  if (!main) return;
-  if (!validRoute) {
-    main.innerHTML = "404";
-    return;
-  }
-  if (validRoute.condition && !validRoute.condition()) {
-    if (validRoute.fallback) goTo(validRoute.fallback);
-    else {
-      window.history.pushState({}, "", "/");
-      render(window.location.pathname || "/");
+  try {
+    const validRoute = routes[route];
+    const main = document.querySelector("body");
+    debugging && console.log("rendering: ", route);
+    debugging && console.log("valid route: ", validRoute);
+    if (!main) return;
+    if (!validRoute) {
+      console.error(
+        "404: no valid route found: ",
+        route,
+        " in routes: ",
+        routes
+      );
+      main.innerHTML = "404";
+      return;
     }
-    return;
-  }
-  document.title = validRoute.title;
-  if (validRoute.content) {
-    validRoute.content.then((content) => {
-      main.innerHTML = content;
+    if (validRoute.condition && !validRoute.condition()) {
+      if (validRoute.fallback) goTo(validRoute.fallback);
+      else {
+        window.history.pushState({}, "", "/");
+        render(window.location.pathname || "/");
+      }
+      return;
+    }
+    document.title = validRoute.title;
+    if (validRoute.content) {
+      validRoute.content.then((content) => {
+        main.innerHTML = content;
+        if (validRoute.scripts) {
+          validRoute.scripts.forEach((script) => {
+            script();
+          });
+        }
+      });
+    } else {
+      main.innerHTML = "";
       if (validRoute.scripts) {
         validRoute.scripts.forEach((script) => {
           script();
         });
       }
-    });
-  } else {
-    main.innerHTML = "";
-    if (validRoute.scripts) {
-      validRoute.scripts.forEach((script) => {
-        script();
-      });
     }
+  } catch (error) {
+    console.log("error while rendering: ", error);
   }
 };
 
 let params: boolean = false;
+let debugging: boolean = false;
 
 /**
  * sets the route to go to
@@ -107,13 +126,12 @@ export const getParam = (name: string) => {
 };
 
 const getRoute = (): string => {
-  console.log("getRoute called");
   let route = window.location.pathname;
   if (params) {
     const urlParams = new URLSearchParams(window.location.search);
     route = urlParams.get("route") || "/";
   }
-  console.log("route: ", route);
+  debugging && console.log("got route: ", route);
   return route;
 };
 
@@ -126,9 +144,11 @@ window.onpopstate = () => {
  * @param useParams whether to use query parameters for routing
  * when using query parameters your route will be in the form of /?route=your-route
  */
-const router = (useParams: boolean = false) => {
-  console.log("router initialized");
+const router = (useParams: boolean = false, debug: boolean = false) => {
   params = useParams;
+  debugging = debug;
+  debugging && console.log("router initialized");
+  debugging && console.log(useParams ? "using params" : "using pathname");
   render(getRoute() || "/"); // render the initial route
 
   window.onpopstate = () => {
