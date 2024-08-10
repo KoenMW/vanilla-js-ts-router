@@ -86,6 +86,8 @@ const render = (route: string) => {
   }
 };
 
+let params: boolean = false;
+
 /**
  * sets the route to go to
  * @param route the route to go to
@@ -104,18 +106,29 @@ export const getParam = (name: string) => {
   return new URLSearchParams(window.location.search).get(name);
 };
 
+const getRoute = (): string => {
+  if (params) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("route") || "/";
+  }
+  return window.location.pathname || "/";
+};
+
 window.onpopstate = () => {
-  render(window.location.pathname || "/");
+  render(getRoute() || "/");
 };
 
 /**
  * initializes the router
+ * @param useParams whether to use query parameters for routing
+ * when using query parameters your route will be in the form of /?route=your-route
  */
-const router = () => {
-  render(window.location.pathname || "/"); // render the initial route
+const router = (useParams: boolean = false) => {
+  params = useParams;
+  render(getRoute() || "/"); // render the initial route
 
   window.onpopstate = () => {
-    render(window.location.pathname || "/");
+    render(getRoute() || "/");
   };
 };
 

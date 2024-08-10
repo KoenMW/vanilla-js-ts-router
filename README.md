@@ -1,6 +1,7 @@
 # Basic Javascript and TypeScript Router
 
 This is a simple router for a vanilla Javascript and TypeScript frontend. It allows you to define routes with associated content, scripts, conditions, and fallbacks.
+Can also use search params if you want to use it for something like github pages
 
 ## installation
 
@@ -10,10 +11,9 @@ npm i basic-ts-router
 
 ## Usage
 
-First, define your routes:
-
 ```typescript
-import router, { setRoutes } from "basic-ts-router";
+import router, { setRoutes, getFile } from "basic-ts-router";
+// getFile gets our html file from your public folder
 
 const routes: Routes = {
   "/": {
