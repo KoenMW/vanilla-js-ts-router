@@ -119,13 +119,14 @@ var getParam = function (name) {
 };
 exports.getParam = getParam;
 var getRoute = function () {
+    console.log("getRoute called");
+    var route = window.location.pathname;
     if (params) {
         var urlParams = new URLSearchParams(window.location.search);
-        console.log(urlParams.get("route"));
-        return urlParams.get("route") || "/";
+        route = urlParams.get("route") || "/";
     }
-    console.log(window.location.pathname);
-    return window.location.pathname || "/";
+    console.log("route: ", route);
+    return route;
 };
 window.onpopstate = function () {
     render(getRoute() || "/");
@@ -137,6 +138,7 @@ window.onpopstate = function () {
  */
 var router = function (useParams) {
     if (useParams === void 0) { useParams = false; }
+    console.log("router initialized");
     params = useParams;
     render(getRoute() || "/"); // render the initial route
     window.onpopstate = function () {
