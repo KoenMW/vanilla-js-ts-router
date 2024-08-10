@@ -121,8 +121,10 @@ exports.getParam = getParam;
 var getRoute = function () {
     if (params) {
         var urlParams = new URLSearchParams(window.location.search);
+        console.log(urlParams.get("route"));
         return urlParams.get("route") || "/";
     }
+    console.log(window.location.pathname);
     return window.location.pathname || "/";
 };
 window.onpopstate = function () {

@@ -107,11 +107,14 @@ export const getParam = (name: string) => {
 };
 
 const getRoute = (): string => {
+  console.log("getRoute called");
+  let route = window.location.pathname;
   if (params) {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get("route") || "/";
+    route = urlParams.get("route") || "/";
   }
-  return window.location.pathname || "/";
+  console.log("route: ", route);
+  return route;
 };
 
 window.onpopstate = () => {
@@ -124,6 +127,7 @@ window.onpopstate = () => {
  * when using query parameters your route will be in the form of /?route=your-route
  */
 const router = (useParams: boolean = false) => {
+  console.log("router initialized");
   params = useParams;
   render(getRoute() || "/"); // render the initial route
 
