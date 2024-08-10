@@ -19,7 +19,7 @@ const routes: Routes = {
   "/": {
     title: "Home",
     content: getFile("/home.html"),
-    scripts: [() => import("./home").then((module) => module.default())],
+    scripts: [() => import("./home").then((module) => module.default())], // you can also use the method directly but I prever dinamic importing
     condition: () => true,
     fallback: "/login",
   },
