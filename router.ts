@@ -8,6 +8,8 @@ export const setRoutes = (newRoutes: Routes) => {
   routes = newRoutes;
 };
 
+type functionType = () => void | Promise<void>;
+
 /**
  * Defines the structure of the routes in the application.
  * @property key: The unique identifier for the route.
@@ -31,7 +33,7 @@ export type Routes = {
   [key: string]: {
     title: string;
     content?: Promise<string>;
-    scripts?: (() => void)[];
+    scripts?: functionType[];
     condition?: () => boolean;
     fallback?: string;
   };
@@ -56,7 +58,7 @@ export const getFile = async (location: string): Promise<string> => {
   }
 };
 
-const render = (route: string) => {
+const render = async (route: string) => {
   try {
     const validRoute = routes[route];
     const main = document.querySelector("body");
@@ -74,10 +76,10 @@ const render = (route: string) => {
       return;
     }
     if (validRoute.condition && !validRoute.condition()) {
-      if (validRoute.fallback) goTo(validRoute.fallback);
+      if (validRoute.fallback) await goTo(validRoute.fallback);
       else {
         window.history.pushState({}, "", "/");
-        render(window.location.pathname || "/");
+        await render(window.location.pathname || "/");
       }
       return;
     }
@@ -86,8 +88,8 @@ const render = (route: string) => {
       validRoute.content.then((content) => {
         main.innerHTML = content;
         if (validRoute.scripts) {
-          validRoute.scripts.forEach((script) => {
-            script();
+          validRoute.scripts.forEach(async (script) => {
+            await script();
           });
         }
       });
@@ -111,9 +113,9 @@ let debugging: boolean = false;
  * sets the route to go to
  * @param route the route to go to
  */
-export const goTo = (route: string) => {
+export const goTo = async (route: string) => {
   history.pushState({}, "", route);
-  render(route);
+  await render(route);
 };
 
 /**
@@ -135,8 +137,8 @@ const getRoute = (): string => {
   return route;
 };
 
-window.onpopstate = () => {
-  render(getRoute() || "/");
+window.onpopstate = async () => {
+  await render(getRoute() || "/");
 };
 
 /**
@@ -144,15 +146,15 @@ window.onpopstate = () => {
  * @param useParams whether to use query parameters for routing
  * when using query parameters your route will be in the form of /?route=your-route
  */
-const router = (useParams: boolean = false, debug: boolean = false) => {
+const router = async (useParams: boolean = false, debug: boolean = false) => {
   params = useParams;
   debugging = debug;
   debugging && console.log("router initialized");
   debugging && console.log(useParams ? "using params" : "using pathname");
-  render(getRoute() || "/"); // render the initial route
+  await render(getRoute() || "/"); // render the initial route
 
-  window.onpopstate = () => {
-    render(getRoute() || "/");
+  window.onpopstate = async () => {
+    await render(getRoute() || "/");
   };
 };
 

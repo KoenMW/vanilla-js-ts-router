@@ -3,6 +3,7 @@
  * @param newRoutes the new routes
  */
 export declare const setRoutes: (newRoutes: Routes) => void;
+type functionType = () => void | Promise<void>;
 /**
  * Defines the structure of the routes in the application.
  * @property key: The unique identifier for the route.
@@ -26,7 +27,7 @@ export type Routes = {
     [key: string]: {
         title: string;
         content?: Promise<string>;
-        scripts?: (() => void)[];
+        scripts?: functionType[];
         condition?: () => boolean;
         fallback?: string;
     };
@@ -41,7 +42,7 @@ export declare const getFile: (location: string) => Promise<string>;
  * sets the route to go to
  * @param route the route to go to
  */
-export declare const goTo: (route: string) => void;
+export declare const goTo: (route: string) => Promise<void>;
 /**
  * gets the value of a parameter from the url
  * @param name the name of the parameter
@@ -53,5 +54,5 @@ export declare const getParam: (name: string) => string | null;
  * @param useParams whether to use query parameters for routing
  * when using query parameters your route will be in the form of /?route=your-route
  */
-declare const router: (useParams?: boolean, debug?: boolean) => void;
+declare const router: (useParams?: boolean, debug?: boolean) => Promise<void>;
 export default router;
