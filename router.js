@@ -78,7 +78,13 @@ let debugging = false;
  * @param route the route to go to
  */
 export const goTo = async (route) => {
-    history.pushState({}, "", route);
+    if (params) {
+        const url = new URL(window.location.href);
+        url.searchParams.set("route", route);
+        history.pushState({}, "", url.toString());
+    }
+    else
+        history.pushState({}, "", route);
     await render(route);
 };
 /**
