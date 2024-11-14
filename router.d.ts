@@ -32,6 +32,7 @@ export type Routes = {
         fallback?: string;
     };
 };
+export declare const setNotFound: (content: string) => void;
 /**
  * gets the content of a file from the public folder
  * @param location the location of the file from the public folder

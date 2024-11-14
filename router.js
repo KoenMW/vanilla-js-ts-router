@@ -6,6 +6,10 @@ let routes = {};
 export const setRoutes = (newRoutes) => {
     routes = newRoutes;
 };
+let notFound = "404";
+export const setNotFound = (content) => {
+    notFound = content;
+};
 /**
  * gets the content of a file from the public folder
  * @param location the location of the file from the public folder
@@ -22,7 +26,7 @@ export const getFile = async (location) => {
     }
     catch (error) {
         console.log("couldn't get file: ", error);
-        return "404";
+        return notFound;
     }
 };
 const render = async (route) => {
@@ -31,29 +35,37 @@ const render = async (route) => {
         const main = document.querySelector("body");
         debugging && console.log("rendering: ", route);
         debugging && console.log("valid route: ", validRoute);
-        if (!main)
+        if (!main) {
+            console.error("no main element found");
             return;
+        }
         if (!validRoute) {
             console.error("404: no valid route found: ", route, " in routes: ", routes);
             main.innerHTML = "404";
             return;
         }
         if (validRoute.condition && !validRoute.condition()) {
-            if (validRoute.fallback)
+            if (validRoute.fallback) {
+                debugging && console.log("going to fallback: ", validRoute.fallback);
                 await goTo(validRoute.fallback);
+            }
             else {
                 window.history.pushState({}, "", "/");
                 await render(window.location.pathname || "/");
             }
+            debugging && console.log("condition failed: ", route);
             return;
         }
         document.title = validRoute.title;
+        debugging && console.log("valid content: ", !!validRoute.content);
         if (validRoute.content) {
             main.innerHTML = await validRoute.content;
             debugging && console.log("content set: ", main.innerHTML);
         }
-        else
+        else {
+            debugging && console.log("no content found, setting empty");
             main.innerHTML = "";
+        }
         if (validRoute.scripts) {
             for (let i = 0; i < validRoute.scripts.length; i++) {
                 await validRoute.scripts[i]();
