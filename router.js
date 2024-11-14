@@ -49,22 +49,14 @@ const render = async (route) => {
         }
         document.title = validRoute.title;
         if (validRoute.content) {
-            validRoute.content.then((content) => {
-                main.innerHTML = content;
-                if (validRoute.scripts) {
-                    validRoute.scripts.forEach(async (script) => {
-                        await script();
-                    });
-                }
-            });
+            main.innerHTML = await validRoute.content;
         }
-        else {
+        else
             main.innerHTML = "";
-            if (validRoute.scripts) {
-                validRoute.scripts.forEach((script) => {
-                    script();
-                });
-            }
+        if (validRoute.scripts) {
+            validRoute.scripts.forEach(async (script) => {
+                await script();
+            });
         }
     }
     catch (error) {

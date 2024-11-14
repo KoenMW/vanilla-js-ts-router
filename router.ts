@@ -85,21 +85,12 @@ const render = async (route: string) => {
     }
     document.title = validRoute.title;
     if (validRoute.content) {
-      validRoute.content.then((content) => {
-        main.innerHTML = content;
-        if (validRoute.scripts) {
-          validRoute.scripts.forEach(async (script) => {
-            await script();
-          });
-        }
+      main.innerHTML = await validRoute.content;
+    } else main.innerHTML = "";
+    if (validRoute.scripts) {
+      validRoute.scripts.forEach(async (script) => {
+        await script();
       });
-    } else {
-      main.innerHTML = "";
-      if (validRoute.scripts) {
-        validRoute.scripts.forEach((script) => {
-          script();
-        });
-      }
     }
   } catch (error) {
     console.log("error while rendering: ", error);

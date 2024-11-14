@@ -1,6 +1,6 @@
 {
   "name": "vanilla-js-ts-router",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "a basic router for a vanila javascript and typescript frontend",
   "main": "router.js",
   "keywords": [
