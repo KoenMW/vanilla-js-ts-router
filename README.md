@@ -6,7 +6,7 @@ Can also use search params if you want to use it for something like github pages
 ## installation
 
 ```bash
-npm i basic-ts-router
+npm i vanilla-js-ts-router
 ```
 
 ## Usage
