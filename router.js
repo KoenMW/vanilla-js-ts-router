@@ -50,13 +50,14 @@ const render = async (route) => {
         document.title = validRoute.title;
         if (validRoute.content) {
             main.innerHTML = await validRoute.content;
+            debugging && console.log("content set: ", main.innerHTML);
         }
         else
             main.innerHTML = "";
         if (validRoute.scripts) {
-            validRoute.scripts.forEach(async (script) => {
-                await script();
-            });
+            for (let i = 0; i < validRoute.scripts.length; i++) {
+                await validRoute.scripts[i]();
+            }
         }
     }
     catch (error) {
